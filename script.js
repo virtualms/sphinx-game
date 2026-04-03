@@ -48,7 +48,8 @@ const RIDDLES = [
 ];
 
 // ── Prize URL ────────────────────────────────────────────────────────────────
-const PRIZE_URL = '#premio';   // Replace with the actual prize/destination URL.
+// TODO: Replace with the actual prize/destination URL before deployment.
+const PRIZE_URL = 'https://example.com/premio'; // ← update this URL
 
 // ── Roman numerals ───────────────────────────────────────────────────────────
 const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
