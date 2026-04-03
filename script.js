@@ -165,12 +165,6 @@ function renderRiddle() {
  */
 function triggerError() {
   errorMsg.classList.remove('hidden');
-  riddleCard.classList.remove('shake');
-  void riddleCard.offsetWidth;
-  riddleCard.classList.add('shake');
-  riddleCard.addEventListener('animationend', () => {
-    riddleCard.classList.remove('shake');
-  }, { once: true });
 
   // Flash input red
   answerInput.classList.add('error-flash');
