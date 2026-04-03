@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Sfinge — Caccia al Tesoro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ INTRO SCREEN ═══════════════ -->
+  <div id="screen-intro" class="screen active">
+    <div class="ornament top-ornament">⸻ ✦ ⸻</div>
+    <div class="intro-content animate__animated animate__fadeIn">
+      <div class="sphinx-icon" aria-hidden="true">𓂀</div>
+      <h1 class="title-main">La Sfinge</h1>
+      <p class="subtitle">Cinque enigmi ti attendono nel buio dell'eternità.</p>
+      <p class="intro-text">
+        Io sono la guardiana dei segreti antichi.<br />
+        Solo chi possiede saggezza e ingegno potrà varcare la mia soglia.<br />
+        Rispondi con cura — una parola sbagliata porta alla rovina.
+      </p>
+      <button id="btn-start" class="btn-primary">
+        <span>Inizia la Sfida</span>
+      </button>
+    </div>
+    <div class="ornament bottom-ornament">⸻ ✦ ⸻</div>
+  </div>
+
+  <!-- ═══════════════ RIDDLE SCREEN ═══════════════ -->
+  <div id="screen-riddle" class="screen hidden">
+    <div class="ornament top-ornament">⸻ ✦ ⸻</div>
+    <div class="riddle-content">
+      <div class="level-badge">
+        <span id="level-number">Enigma I</span>
+      </div>
+      <div id="riddle-card" class="riddle-card animate__animated">
+        <div class="sphinx-icon small" aria-hidden="true">𓂀</div>
+        <h2 id="riddle-title" class="riddle-title"></h2>
+        <p id="riddle-text" class="riddle-text"></p>
+        <div class="input-area">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="answer-input"
+              class="answer-input"
+              placeholder="La tua risposta..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <button id="btn-submit" class="btn-primary">
+            <span>Sottometti Risposta</span>
+          </button>
+        </div>
+        <p id="error-msg" class="error-msg hidden" role="alert">
+          ✗ &nbsp;Risposta errata. La Sfinge non è soddisfatta.
+        </p>
+      </div>
+    </div>
+    <div class="progress-bar-wrapper">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div class="ornament bottom-ornament">⸻ ✦ ⸻</div>
+  </div>
+
+  <!-- ═══════════════ VICTORY SCREEN ═══════════════ -->
+  <div id="screen-victory" class="screen hidden">
+    <div class="ornament top-ornament">⸻ ✦ ⸻</div>
+    <div class="victory-content animate__animated animate__zoomIn">
+      <div class="victory-icon" aria-hidden="true">👑</div>
+      <h1 class="victory-title">Hai Trionfato!</h1>
+      <p class="victory-text">
+        La Sfinge si inchina davanti alla tua saggezza.<br />
+        Hai svelato tutti i misteri dell'eternità.<br />
+        Il tesoro è tuo.
+      </p>
+      <a id="prize-link" href="#" class="btn-primary prize-btn" target="_blank" rel="noopener noreferrer">
+        <span>🏆 Scopri il Tuo Premio</span>
+      </a>
+      <button id="btn-restart" class="btn-secondary">
+        <span>↺ Ricomincia</span>
+      </button>
+    </div>
+    <div class="ornament bottom-ornament">⸻ ✦ ⸻</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+    referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
