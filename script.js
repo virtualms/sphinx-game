@@ -16,19 +16,19 @@
 //   5 → "vento"
 const RIDDLES = [
   {
-    title: 'L\'Uomo',
+    title: 'Ciò Che Sei',
     text:  'Chi è quell\'animale che al mattino cammina con quattro zampe, ' +
            'a mezzogiorno con due e alla sera con tre?',
     hash:  '1f4b501cdaf38b8ed380f8cfd95e8afaa72d20a2bd076a4607b2a935e1438969',
   },
   {
-    title: 'Il Giorno e la Notte',
+    title: 'Il Ciclo Infinito',
     text:  'Vi sono due sorelle, delle quali l\'una genera l\'altra ' +
            'e la seconda, a sua volta, genera la prima. Chi sono?',
     hash:  '2c9d2fc2108513bb1e1a69b814562f892195ca38ad446330afbe1ec47c9fad8c',
   },
   {
-    title: 'L\'Ombra',
+    title: 'Quello Che Non Esiste',
     text:  'Non ho voce, ma urlo se mi calpesti. ' +
            'Non ho ali, ma volo quando mi liberi. ' +
            'Sono il confine tra ciò che è stato e ciò che sarà, ' +
@@ -36,12 +36,12 @@ const RIDDLES = [
     hash:  'e393d2af86a51b0b347db1a8c887857f99ea890543c1d1c1c64c4c7e39021004',
   },
   {
-    title: 'Il Tempo',
+    title: 'L\'Inesorabile Divoratore',
     text:  'Questa cosa ogni cosa divora: ciò che ha vita, la fauna e la flora…',
     hash:  '8d6546721a1d106cf8d27f7326ebae7e83c1592aeb7479b8f7ec9d8d700d464f',
   },
   {
-    title: 'Il Vento',
+    title: 'Ovunque Pervade',
     text:  'Senza ali vola, senza voci urla, senza denti morde, senza bocca mormora.',
     hash:  '0b9c8acadd9f05997432738a1e38fa9561a0e781c39aba14fac7adee104559b1',
   },
@@ -49,13 +49,14 @@ const RIDDLES = [
 
 // ── Prize URL ────────────────────────────────────────────────────────────────
 // TODO: Replace with the actual prize/destination URL before deployment.
-const PRIZE_URL = 'https://example.com/premio'; // ← update this URL
+const PRIZE_URL = 'https://gifft.me/o/eg/v4n1sr36vufvetmyc83uhifc'; // ← update this URL
 
 // ── Roman numerals ───────────────────────────────────────────────────────────
 const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 
 // ── State ────────────────────────────────────────────────────────────────────
 let currentLevel = 0;
+let isMusicPlaying = false;
 
 // ── DOM References ───────────────────────────────────────────────────────────
 const screenIntro   = document.getElementById('screen-intro');
@@ -65,6 +66,8 @@ const screenVictory = document.getElementById('screen-victory');
 const btnStart      = document.getElementById('btn-start');
 const btnSubmit     = document.getElementById('btn-submit');
 const btnRestart    = document.getElementById('btn-restart');
+const btnMute       = document.getElementById('btn-mute');
+const bgMusic       = document.getElementById('bg-music');
 
 const answerInput   = document.getElementById('answer-input');
 const riddleTitle   = document.getElementById('riddle-title');
@@ -226,6 +229,39 @@ btnRestart.addEventListener('click', () => {
   currentLevel = 0;
   showScreen(screenIntro);
 });
+
+/**
+ * Toggle background music on/off.
+ */
+function toggleMusic() {
+  if (isMusicPlaying) {
+    bgMusic.pause();
+    btnMute.textContent = '🔇';
+  } else {
+    bgMusic.play().catch(() => {});
+    btnMute.textContent = '🔊';
+  }
+  isMusicPlaying = !isMusicPlaying;
+}
+
+btnMute.addEventListener('click', toggleMusic);
+
+/**
+ * Start music on first user interaction (browser autoplay policy).
+ */
+function startMusicOnce() {
+  if (!isMusicPlaying && bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+    isMusicPlaying = true;
+    btnMute.textContent = '🔊';
+  }
+  // Remove listeners after first trigger
+  btnStart.removeEventListener('click', startMusicOnce);
+  answerInput.removeEventListener('focus', startMusicOnce);
+}
+
+btnStart.addEventListener('click', startMusicOnce);
+answerInput.addEventListener('focus', startMusicOnce);
 
 /**
  * Validate the current answer.

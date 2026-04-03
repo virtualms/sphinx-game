@@ -457,3 +457,29 @@ body::after {
     padding: 0.8rem 0.8rem;
   }
 }
+
+/* ── Music Toggle Button ── */
+.btn-mute {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: 50%;
+  width: 2.8rem;
+  height: 2.8rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.btn-mute:hover {
+  opacity: 1;
+  border-color: var(--clr-gold);
+  box-shadow: 0 0 12px var(--clr-border-glow);
+}
