@@ -483,3 +483,330 @@ body::after {
   border-color: var(--clr-gold);
   box-shadow: 0 0 12px var(--clr-border-glow);
 }
+
+/* ═══════════════════════════════════════════════
+   WRATH OF THE SPHINX — Effects
+   ═══════════════════════════════════════════════ */
+
+/* Sand/darkness overlay */
+.wrath-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(10, 5, 0, 0) 100%);
+  transition: background 0.8s ease;
+}
+
+.wrath-overlay.level-1 {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(60, 40, 10, 0.15) 100%);
+}
+
+.wrath-overlay.level-2 {
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(80, 30, 10, 0.3) 100%);
+}
+
+.wrath-overlay.level-3 {
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(100, 20, 10, 0.45) 100%);
+  animation: vignette-pulse 2s ease-in-out infinite;
+}
+
+.wrath-overlay.level-4 {
+  background: radial-gradient(ellipse at center, transparent 10%, rgba(120, 10, 5, 0.6) 100%);
+  animation: vignette-pulse 1.2s ease-in-out infinite;
+}
+
+.wrath-overlay.level-5 {
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(150, 0, 0, 0.75) 100%);
+  animation: vignette-pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes vignette-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Sand particles */
+.sand-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.wrath-overlay.level-2 .sand-particles,
+.wrath-overlay.level-3 .sand-particles,
+.wrath-overlay.level-4 .sand-particles,
+.wrath-overlay.level-5 .sand-particles {
+  opacity: 1;
+}
+
+.sand-grain {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(180, 140, 80, 0.6);
+  border-radius: 50%;
+  animation: sand-fall linear infinite;
+}
+
+@keyframes sand-fall {
+  0% {
+    transform: translateY(-10px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100vh) translateX(20px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Screen shake */
+@keyframes shake-mild {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, -2px); }
+  80% { transform: translate(1px, 2px); }
+}
+
+@keyframes shake-heavy {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4px, 2px); }
+  20% { transform: translate(4px, -3px); }
+  30% { transform: translate(-3px, -4px); }
+  40% { transform: translate(3px, 3px); }
+  50% { transform: translate(-4px, -2px); }
+  60% { transform: translate(4px, 1px); }
+  70% { transform: translate(-2px, 4px); }
+  80% { transform: translate(2px, -3px); }
+  90% { transform: translate(-3px, 2px); }
+}
+
+body.shake-mild {
+  animation: shake-mild 0.4s ease-in-out;
+}
+
+body.shake-heavy {
+  animation: shake-heavy 0.6s ease-in-out;
+}
+
+/* Sphinx anger glow */
+.sphinx-icon.wroth {
+  color: #c0392b;
+  text-shadow: 0 0 20px rgba(192, 57, 43, 0.6);
+  animation: sphinx-rage 1s ease-in-out infinite;
+}
+
+.sphinx-icon.enraged {
+  color: #e74c3c;
+  text-shadow: 0 0 30px rgba(231, 76, 60, 0.8), 0 0 60px rgba(231, 76, 60, 0.4);
+  animation: sphinx-rage 0.5s ease-in-out infinite;
+}
+
+@keyframes sphinx-rage {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 5px rgba(231, 76, 60, 0.5));
+  }
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 15px rgba(231, 76, 60, 0.9));
+  }
+}
+
+/* Wrath message */
+.wrath-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  font-family: var(--font-title);
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  color: rgba(192, 57, 43, 0.9);
+  text-align: center;
+  text-shadow: 0 0 20px rgba(192, 57, 43, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  white-space: nowrap;
+}
+
+.wrath-message.visible {
+  opacity: 1;
+  animation: message-appear 0.5s ease-out;
+}
+
+.wrath-message.hidden {
+  opacity: 0;
+}
+
+@keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Error input flash */
+.answer-input.error-flash {
+  border-color: var(--clr-error) !important;
+  box-shadow: 0 0 20px rgba(192, 57, 43, 0.4);
+}
+
+/* Card error shake */
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.riddle-card.shake {
+  animation: card-shake 0.5s ease-in-out;
+}
+
+/* Correct flash */
+@keyframes correct-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(201, 168, 76, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(201, 168, 76, 0.8), 0 0 60px rgba(232, 201, 122, 0.4); }
+}
+
+.riddle-card.correct-flash {
+  animation: correct-glow 0.8s ease-in-out;
+}
+
+/* ═══════════════════════════════════════════════
+   YOU DIED — Dark Souls Style
+   ═══════════════════════════════════════════════ */
+
+.screen-death {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+}
+
+.screen-death.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.screen-death.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.death-bg {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  animation: death-fade-in 3s ease-in forwards;
+}
+
+@keyframes death-fade-in {
+  0% { opacity: 0; }
+  30% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.death-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.death-title {
+  font-family: var(--font-title);
+  font-size: clamp(3rem, 12vw, 7rem);
+  font-weight: 900;
+  color: #8b0000;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 20px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(139, 0, 0, 0.3),
+    0 0 80px rgba(139, 0, 0, 0.15);
+  opacity: 0;
+  transform: scale(1.3);
+  animation: death-text-appear 2s ease-out 0.8s forwards;
+  line-height: 1.1;
+}
+
+@keyframes death-text-appear {
+  0% {
+    opacity: 0;
+    transform: scale(1.3);
+    filter: blur(8px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  60% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.death-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: rgba(200, 50, 50, 0.7);
+  font-style: italic;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  animation: subtitle-fade 1.5s ease-out 2s forwards;
+}
+
+@keyframes subtitle-fade {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.death-refresh {
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  color: rgba(150, 150, 150, 0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: refresh-hint 1s ease-out 3.5s forwards;
+}
+
+.death-refresh kbd {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+@keyframes refresh-hint {
+  0% { opacity: 0; }
+  100% { opacity: 0.6; }
+}

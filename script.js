@@ -57,6 +57,9 @@ const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 // ── State ────────────────────────────────────────────────────────────────────
 let currentLevel = 0;
 let isMusicPlaying = false;
+let wrathLevel = 0; // 0-5, tracks consecutive wrong answers
+let wrathMessageTimeout = null;
+let isGameOver = false; // blocks all input after death
 
 // ── DOM References ───────────────────────────────────────────────────────────
 const screenIntro   = document.getElementById('screen-intro');
@@ -69,6 +72,9 @@ const btnRestart    = document.getElementById('btn-restart');
 const btnMute       = document.getElementById('btn-mute');
 const bgMusic       = document.getElementById('bg-music');
 const victoryMusic  = document.getElementById('victory-music');
+const errorSound    = document.getElementById('error-sound');
+const deathSound    = document.getElementById('death-sound');
+const screenDeath   = document.getElementById('screen-death');
 
 const answerInput   = document.getElementById('answer-input');
 const riddleTitle   = document.getElementById('riddle-title');
@@ -78,6 +84,19 @@ const errorMsg      = document.getElementById('error-msg');
 const progressBar   = document.getElementById('progress-bar');
 const riddleCard    = document.getElementById('riddle-card');
 const prizeLink     = document.getElementById('prize-link');
+const wrathOverlay  = document.getElementById('wrath-overlay');
+const wrathMessage  = document.getElementById('wrath-message');
+const sandParticles = document.getElementById('sand-particles');
+
+// ── Wrath Messages ───────────────────────────────────────────────────────────
+const WRATH_MESSAGES = [
+  '', // 0 errors
+  'La Sfinge osserva...',
+  'Non giocare con me, mortale...',
+  'La tua arroganza mi offende!',
+  'Un altro errore e la rovina sarà tua...',
+  'LA SFINGE DECIDE LA TUA FINE',
+];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -152,6 +171,138 @@ function triggerError() {
   riddleCard.addEventListener('animationend', () => {
     riddleCard.classList.remove('shake');
   }, { once: true });
+
+  // Flash input red
+  answerInput.classList.add('error-flash');
+  setTimeout(() => answerInput.classList.remove('error-flash'), 500);
+
+  // Play error sound
+  errorSound.currentTime = 0;
+  errorSound.play().catch(() => {});
+
+  // Increase wrath
+  incrementWrath();
+}
+
+/**
+ * Increment wrath level and apply visual effects.
+ */
+function incrementWrath() {
+  if (wrathLevel >= 5) return;
+  wrathLevel++;
+
+  // Update overlay class
+  wrathOverlay.className = 'wrath-overlay';
+  if (wrathLevel > 0) {
+    wrathOverlay.classList.add('level-' + wrathLevel);
+  }
+
+  // Screen shake
+  if (wrathLevel >= 3) {
+    document.body.classList.remove('shake-mild', 'shake-heavy');
+    void document.body.offsetWidth;
+    document.body.classList.add(wrathLevel >= 4 ? 'shake-heavy' : 'shake-mild');
+    setTimeout(() => document.body.classList.remove('shake-mild', 'shake-heavy'), 600);
+  }
+
+  // Sphinx anger
+  updateSphinxAnger();
+
+  // Sand particles
+  updateSandParticles();
+
+  // Show wrath message
+  showWrathMessage(wrathLevel);
+
+  // DEATH at wrath level 5
+  if (wrathLevel >= 5) {
+    setTimeout(triggerDeath, 1500);
+  }
+}
+
+/**
+ * Reset wrath to calm state.
+ */
+function resetWrath() {
+  wrathLevel = 0;
+  wrathOverlay.className = 'wrath-overlay';
+  document.body.classList.remove('shake-mild', 'shake-heavy');
+  wrathMessage.classList.remove('visible');
+  wrathMessage.classList.add('hidden');
+
+  // Reset sphinx icons
+  document.querySelectorAll('.sphinx-icon').forEach(icon => {
+    icon.classList.remove('wroth', 'enraged');
+  });
+
+  // Clear sand particles
+  sandParticles.innerHTML = '';
+
+  // Clear any pending message timeout
+  if (wrathMessageTimeout) {
+    clearTimeout(wrathMessageTimeout);
+    wrathMessageTimeout = null;
+  }
+}
+
+/**
+ * Update sphinx icon anger state.
+ */
+function updateSphinxAnger() {
+  document.querySelectorAll('.sphinx-icon').forEach(icon => {
+    icon.classList.remove('wroth', 'enraged');
+    if (wrathLevel >= 4) {
+      icon.classList.add('enraged');
+    } else if (wrathLevel >= 2) {
+      icon.classList.add('wroth');
+    }
+  });
+}
+
+/**
+ * Generate sand particle elements.
+ */
+function updateSandParticles() {
+  sandParticles.innerHTML = '';
+  if (wrathLevel < 2) return;
+
+  const count = wrathLevel * 15; // More particles as wrath increases
+  for (let i = 0; i < count; i++) {
+    const grain = document.createElement('div');
+    grain.className = 'sand-grain';
+    grain.style.left = Math.random() * 100 + '%';
+    grain.style.animationDuration = (2 + Math.random() * 3) + 's';
+    grain.style.animationDelay = Math.random() * 2 + 's';
+    grain.style.opacity = 0.3 + Math.random() * 0.5;
+    grain.style.width = (1 + Math.random() * 2) + 'px';
+    grain.style.height = grain.style.width;
+    sandParticles.appendChild(grain);
+  }
+}
+
+/**
+ * Show a wrath message temporarily.
+ * @param {number} level
+ */
+function showWrathMessage(level) {
+  if (level < 1 || level > 5) return;
+
+  // Clear any existing timeout
+  if (wrathMessageTimeout) {
+    clearTimeout(wrathMessageTimeout);
+  }
+
+  const message = WRATH_MESSAGES[level];
+  wrathMessage.textContent = message;
+  wrathMessage.classList.remove('hidden');
+  wrathMessage.classList.add('visible');
+
+  // Hide message after delay (longer for higher levels)
+  const displayTime = level >= 4 ? 3000 : level >= 3 ? 2500 : 2000;
+  wrathMessageTimeout = setTimeout(() => {
+    wrathMessage.classList.remove('visible');
+    wrathMessage.classList.add('hidden');
+  }, displayTime);
 }
 
 /**
@@ -162,6 +313,8 @@ function advanceLevel() {
   riddleCard.addEventListener('animationend', () => {
     riddleCard.classList.remove('correct-flash', 'animate__animated', 'animate__fadeInUp');
     currentLevel++;
+    // Reset wrath on correct answer!
+    resetWrath();
     if (currentLevel >= RIDDLES.length) {
       showVictory();
     } else {
@@ -196,6 +349,46 @@ function playVictoryMusic() {
 }
 
 /**
+ * Trigger the Dark Souls "YOU DIED" screen.
+ */
+function triggerDeath() {
+  isGameOver = true;
+
+  // Stop all sounds
+  bgMusic.pause();
+  errorSound.pause();
+  victoryMusic.pause();
+
+  // Play death sound
+  deathSound.currentTime = 0;
+  deathSound.play().catch(() => {});
+
+  // Show death screen
+  screenDeath.classList.remove('hidden');
+  screenDeath.classList.add('visible');
+
+  // Disable all game controls
+  btnSubmit.disabled = true;
+  answerInput.disabled = true;
+  btnStart.disabled = true;
+  btnRestart.disabled = true;
+  btnMute.disabled = true;
+
+  // Listen for R key to refresh
+  document.addEventListener('keydown', handleDeathRefresh);
+}
+
+/**
+ * Handle R key press to restart after death.
+ * @param {KeyboardEvent} e
+ */
+function handleDeathRefresh(e) {
+  if (e.key === 'r' || e.key === 'R') {
+    location.reload();
+  }
+}
+
+/**
  * Fire canvas-confetti celebration.
  */
 function launchConfetti() {
@@ -227,6 +420,7 @@ function launchConfetti() {
 // ── Event Handlers ────────────────────────────────────────────────────────────
 
 btnStart.addEventListener('click', () => {
+  if (isGameOver) return;
   currentLevel = 0;
   renderRiddle();
   showScreen(screenRiddle);
@@ -242,10 +436,13 @@ answerInput.addEventListener('keydown', e => {
 });
 
 btnRestart.addEventListener('click', () => {
+  if (isGameOver) return;
   currentLevel = 0;
   // Stop victory music if playing
   victoryMusic.pause();
   victoryMusic.currentTime = 0;
+  // Reset wrath
+  resetWrath();
   showScreen(screenIntro);
 });
 
@@ -253,6 +450,7 @@ btnRestart.addEventListener('click', () => {
  * Toggle background music on/off.
  */
 function toggleMusic() {
+  if (isGameOver) return;
   if (isMusicPlaying) {
     bgMusic.pause();
     btnMute.textContent = '🔇';
@@ -269,6 +467,7 @@ btnMute.addEventListener('click', toggleMusic);
  * Start music on first user interaction (browser autoplay policy).
  */
 function startMusicOnce() {
+  if (isGameOver) return;
   if (!isMusicPlaying && bgMusic.paused) {
     bgMusic.play().catch(() => {});
     isMusicPlaying = true;
@@ -286,6 +485,8 @@ answerInput.addEventListener('focus', startMusicOnce);
  * Validate the current answer.
  */
 function checkAnswer() {
+  if (isGameOver) return;
+
   const raw        = answerInput.value;
   const normalised = normalise(raw);
 

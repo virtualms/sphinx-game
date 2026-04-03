@@ -22,6 +22,28 @@
   <audio id="victory-music" preload="auto">
     <source src="music/egyptian-heavy-metal.mp3" type="audio/mpeg">
   </audio>
+  <audio id="error-sound" preload="auto">
+    <source src="music/engine-rumble.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="death-sound" preload="auto">
+    <source src="music/death-sound.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ═══════════════ WRATH OVERLAY ═══════════════ -->
+  <div id="wrath-overlay" class="wrath-overlay" aria-hidden="true">
+    <div id="sand-particles" class="sand-particles"></div>
+  </div>
+  <div id="wrath-message" class="wrath-message hidden"></div>
+
+  <!-- ═══════════════ YOU DIED SCREEN ═══════════════ -->
+  <div id="screen-death" class="screen-death hidden" aria-hidden="true">
+    <div class="death-bg"></div>
+    <div class="death-content">
+      <h1 class="death-title" id="death-title">YOU DIED</h1>
+      <p class="death-subtitle">La Sfinge ha deciso la tua fine.</p>
+      <p class="death-refresh">Premi <kbd>R</kbd> per ricominciare</p>
+    </div>
+  </div>
 
   <!-- ═══════════════ INTRO SCREEN ═══════════════ -->
   <div id="screen-intro" class="screen active">
@@ -29,7 +51,7 @@
     <div class="intro-content animate__animated animate__fadeIn">
       <div class="sphinx-icon" aria-hidden="true">𓂀</div>
       <h1 class="title-main">La Sfinge</h1>
-      <p class="subtitle">Cinque enigmi ti attendono nel buio dell'eternità.</p>
+      <p class="subtitle">Cinque enigmi ti attendono.</p>
       <p class="intro-text">
         Io sono la guardiana dei segreti antichi.<br />
         Solo chi possiede saggezza e ingegno potrà varcare la mia soglia.<br />
