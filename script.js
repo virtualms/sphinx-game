@@ -68,6 +68,7 @@ const btnSubmit     = document.getElementById('btn-submit');
 const btnRestart    = document.getElementById('btn-restart');
 const btnMute       = document.getElementById('btn-mute');
 const bgMusic       = document.getElementById('bg-music');
+const victoryMusic  = document.getElementById('victory-music');
 
 const answerInput   = document.getElementById('answer-input');
 const riddleTitle   = document.getElementById('riddle-title');
@@ -170,13 +171,28 @@ function advanceLevel() {
 }
 
 /**
- * Launch the victory screen with confetti.
+ * Launch the victory screen with confetti and heavy metal music.
  */
 function showVictory() {
   prizeLink.href = PRIZE_URL;
   updateProgress(); // 100%
   showScreen(screenVictory);
   launchConfetti();
+  playVictoryMusic();
+}
+
+/**
+ * Stop background music and play victory heavy metal.
+ */
+function playVictoryMusic() {
+  // Stop background music
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+  isMusicPlaying = false;
+  btnMute.textContent = '🔇';
+
+  // Play victory music
+  victoryMusic.play().catch(() => {});
 }
 
 /**
@@ -227,6 +243,9 @@ answerInput.addEventListener('keydown', e => {
 
 btnRestart.addEventListener('click', () => {
   currentLevel = 0;
+  // Stop victory music if playing
+  victoryMusic.pause();
+  victoryMusic.currentTime = 0;
   showScreen(screenIntro);
 });
 
