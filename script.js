@@ -8,12 +8,6 @@
 // ── Riddle Database ──────────────────────────────────────────────────────────
 // Each entry:  { title, text, hash }
 // Hashes are SHA-256 of the normalised answer (lowercase, single-space trimmed).
-// Correct answers (for reference only, never stored here):
-//   1 → "uomo"
-//   2 → "giorno e notte"
-//   3 → "ombra"
-//   4 → "tempo"
-//   5 → "vento"
 const RIDDLES = [
   {
     title: 'Ciò Che Sei',
@@ -23,8 +17,8 @@ const RIDDLES = [
   },
   {
     title: 'Il Ciclo Infinito',
-    text:  'Vi sono due sorelle, delle quali l\'una genera l\'altra ' +
-           'e la seconda, a sua volta, genera la prima. Chi sono?',
+    text:  'Fratello e sorella, l\'uno genera l\'altra ' +
+           'e la seconda, a sua volta, genera il primo. Chi sono?',
     hash:  '2c9d2fc2108513bb1e1a69b814562f892195ca38ad446330afbe1ec47c9fad8c',
   },
   {
@@ -101,12 +95,38 @@ const WRATH_MESSAGES = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /**
- * Normalise a user answer: lowercase + collapse/trim whitespace.
+ * Normalise a user answer: lowercase, remove ALL Italian articles, collapse whitespace.
+ * Handles apostrophes (l'uomo → uomo).
+ * Examples: "IL TEMPO" → "tempo", "il giorno e la notte" → "giorno e notte", "l'uomo" → "uomo"
  * @param {string} raw
  * @returns {string}
  */
 function normalise(raw) {
-  return raw.toLowerCase().replace(/\s+/g, ' ').trim();
+  let s = raw.toLowerCase().trim();
+
+  // 1. Replace apostrophes: "l'uomo" → "l uomo", "un'amica" → "un amica"
+  s = s.replace(/['']/g, ' ');
+
+  // 2. Remove ALL articles (determinative, indeterminative, preposti)
+  const allArticles = [
+    'dello', 'della', 'degli', 'delle', 'dallo', 'dalla', 'dagli', 'dalle',
+    'uno', 'una', 'gli', 'del', 'dei', 'dal', 'dai',
+    'il', 'lo', 'la', 'le', 'un',
+  ];
+  // Deduplicate and sort longest-first
+  const unique = [...new Set(allArticles)].sort((a, b) => b.length - a.length);
+  const pattern = unique.map(a => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  // Match article as a whole word (word boundary on both sides)
+  const re = new RegExp(`\\b(?:${pattern})\\s*`, 'gi');
+  s = s.replace(re, '');
+
+  // 3. Also remove standalone "l" and "i" that resulted from apostrophe split
+  s = s.replace(/\b(?:l|i)\b\s*/g, '');
+
+  // 4. Collapse multiple spaces and trim
+  s = s.replace(/\s+/g, ' ').trim();
+
+  return s;
 }
 
 /**
