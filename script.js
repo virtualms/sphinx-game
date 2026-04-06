@@ -69,6 +69,8 @@ const victoryMusic  = document.getElementById('victory-music');
 const errorSound    = document.getElementById('error-sound');
 const deathSound    = document.getElementById('death-sound');
 const screenDeath   = document.getElementById('screen-death');
+const urloSound     = document.getElementById('urlo-sound');
+const screenSiae    = document.getElementById('screen-siae');
 
 const answerInput   = document.getElementById('answer-input');
 const riddleTitle   = document.getElementById('riddle-title');
@@ -501,7 +503,14 @@ answerInput.addEventListener('focus', startMusicOnce);
 function checkAnswer() {
   if (isGameOver) return;
 
-  const raw        = answerInput.value;
+  const raw = answerInput.value;
+
+  // SIAE EASTER EGG — triggers on "siae" (case-insensitive)
+  if (raw.toLowerCase().trim() === 'siae') {
+    triggerSiae();
+    return;
+  }
+
   const normalised = normalise(raw);
 
   if (!normalised) {
@@ -517,4 +526,38 @@ function checkAnswer() {
   } else {
     triggerError();
   }
+}
+
+/**
+ * Trigger the SIAE easter egg: urlo, wojak, max wrath, game over.
+ */
+function triggerSiae() {
+  isGameOver = true;
+
+  // Stop all game sounds
+  bgMusic.pause();
+  errorSound.pause();
+  victoryMusic.pause();
+  deathSound.pause();
+
+  // Max wrath
+  wrathLevel = 5;
+  wrathOverlay.className = 'wrath-overlay level-5';
+  updateSphinxAnger();
+  updateSandParticles();
+
+  // Play urlo
+  urloSound.currentTime = 0;
+  urloSound.play().catch(() => {});
+
+  // Show SIAE screen
+  screenSiae.classList.remove('hidden');
+  screenSiae.classList.add('visible');
+
+  // Disable all controls
+  btnSubmit.disabled = true;
+  answerInput.disabled = true;
+  btnStart.disabled = true;
+  btnRestart.disabled = true;
+  btnMute.disabled = true;
 }

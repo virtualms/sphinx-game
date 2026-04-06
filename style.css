@@ -810,3 +810,94 @@ body.shake-heavy {
   0% { opacity: 0; }
   100% { opacity: 0.6; }
 }
+
+/* ═══════════════════════════════════════════════
+   SIAE EASTER EGG — Wojak NOOOO
+   ═══════════════════════════════════════════════ */
+
+.screen-siae {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen-siae.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.screen-siae.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.siae-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #1a0000 0%, #000 70%);
+  animation: siae-flash 0.3s ease-out;
+}
+
+@keyframes siae-flash {
+  0% { background: #ff0000; }
+  100% { background: radial-gradient(ellipse at center, #1a0000 0%, #000 70%); }
+}
+
+.siae-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+#wojak-img {
+  max-width: min(80vw, 500px);
+  max-height: 50vh;
+  object-fit: contain;
+  animation: wojak-shake 0.15s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.5));
+}
+
+@keyframes wojak-shake {
+  0% { transform: translate(-3px, 2px) rotate(-2deg); }
+  100% { transform: translate(3px, -2px) rotate(2deg); }
+}
+
+.siae-text {
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: 900;
+  color: #ff0000;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 20px rgba(255, 0, 0, 0.8),
+    0 0 40px rgba(255, 0, 0, 0.5),
+    0 0 80px rgba(255, 0, 0, 0.3);
+  animation: siae-text-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes siae-text-pulse {
+  0% {
+    transform: scale(1);
+    text-shadow:
+      0 0 20px rgba(255, 0, 0, 0.8),
+      0 0 40px rgba(255, 0, 0, 0.5),
+      0 0 80px rgba(255, 0, 0, 0.3);
+  }
+  100% {
+    transform: scale(1.03);
+    text-shadow:
+      0 0 30px rgba(255, 0, 0, 1),
+      0 0 60px rgba(255, 0, 0, 0.7),
+      0 0 120px rgba(255, 0, 0, 0.4);
+  }
+}
